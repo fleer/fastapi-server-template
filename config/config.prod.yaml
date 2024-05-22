@@ -1,0 +1,24 @@
+version: ${VERSION}
+connection:
+  schema: public
+  dev:
+    schema: public
+    host: localhost
+    dbname: postgres
+    port: 5432
+    user: postgres
+    password: postgres
+  prod:
+    schema: public
+    host: ${POSTGRES_HOST}
+    dbname: ${POSTGRES_DATABASE}
+    port: ${POSTGRES_PORT}
+    user: ${POSTGRES_USER}
+    password: ${POSTGRES_PASSWORD}
+  test:
+    schema: test
+    host: localhost
+    dbname: test
+    port: 5432
+    user: postgres
+    password: postgres

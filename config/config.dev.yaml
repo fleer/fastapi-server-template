@@ -1,0 +1,23 @@
+version: development
+connection:
+  dev:
+    schema: public
+    host: localhost
+    dbname: postgres
+    port: 5432
+    user: postgres
+    password: postgres
+  prod:
+    schema: public
+    host: postgres
+    dbname: postgres
+    port: 5432
+    user: postgres
+    password: postgres
+  test:
+    schema: postgres
+    host: localhost
+    dbname: postgres
+    port: 5432
+    user: postgres
+    password: postgres
