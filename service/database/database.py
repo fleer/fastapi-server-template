@@ -6,7 +6,7 @@ from typing import Tuple
 
 import sqlalchemy
 from sqlalchemy import MetaData, create_engine
-from sqlalchemy.orm import declarative_base, sessionmaker
+from sqlalchemy.orm import sessionmaker
 from sqlalchemy_utils import create_database, database_exists
 
 from ..config import CONFIG_DIR
@@ -15,7 +15,9 @@ from ..utils import get_config
 logger = logging.getLogger(__name__)
 
 
-def config(filename: str = CONFIG_DIR, stage: str | None = None) -> Tuple[str, str]:
+def get_db_config(
+    filename: str = CONFIG_DIR, stage: str | None = None
+) -> Tuple[str, str]:
     """config.
 
     Function for reading the given section of a config file
@@ -37,7 +39,7 @@ def config(filename: str = CONFIG_DIR, stage: str | None = None) -> Tuple[str, s
     logger.debug(filename)
     full_config = get_config(filename)
     if stage is None:
-        stage = os.getenv("stage", "dev")
+        stage = os.getenv("STAGE", "dev")
     data_base = {}
     if stage in full_config["connection"].keys():
         connection_info = full_config["connection"][stage]
@@ -87,11 +89,10 @@ def create_database_with_schema_if_not_exists(
                 conn.execute(sqlalchemy.schema.CreateSchema(schema))
 
 
-connection_string, schema = config()
-engine = create_engine(connection_string)
+connection_string, schema = get_db_config()
 
-SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+SessionLocal = sessionmaker(
+    autocommit=False, autoflush=False, bind=create_engine(connection_string)
+)
 
 metadata = MetaData(schema=schema)
-
-Base = declarative_base(metadata=metadata)

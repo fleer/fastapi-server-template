@@ -4,19 +4,18 @@ import os
 from shutil import copytree
 from typing import Any, Generator
 
-import alembic.config
 import pytest
 from fastapi import FastAPI
 from fastapi.testclient import TestClient
 from sqlalchemy import Connection, create_engine
 from sqlalchemy.orm import Session, sessionmaker
-from sqlalchemy_utils import drop_database
 
+import alembic.config
 from service.config import CONFIG_DIR
-from service.database import database
+from service.database import database, models
 from service.routes import get_db, healthcheck
 
-connection_string, schema = database.config(CONFIG_DIR, "test")
+connection_string, schema = database.get_db_config(CONFIG_DIR, "test")
 engine = create_engine(connection_string)
 
 SessionTesting = sessionmaker(bind=engine)
@@ -60,10 +59,12 @@ def start_application() -> FastAPI:
 
 def pytest_sessionstart() -> None:
     """Set up the database."""
+    os.environ["STAGE"] = "test"
+    db_engine = create_engine(connection_string)
     database.create_database_with_schema_if_not_exists(
-        engine, schema, reset_schema=True
+        db_engine, schema, reset_schema=True
     )
-    engine.dispose()
+    db_engine.dispose()
 
 
 @pytest.fixture
@@ -95,12 +96,13 @@ def app() -> Generator[FastAPI, Any, None]:
     otherwise create the tables directly.
 
     """
-    with engine.begin() as connection:
-        migrate_in_memory("migration", ALEMBIC_CONFIG, connection)
+    db_engine = create_engine(connection_string)
+    with db_engine.begin() as connection:
+        migrate_in_memory("alembic", ALEMBIC_CONFIG, connection)
     _app = start_application()
     yield _app
-    drop_database(engine.url)
-    engine.dispose()
+    models.Base.metadata.drop_all(bind=db_engine)
+    db_engine.dispose()
 
 
 @pytest.fixture(scope="function")

@@ -15,9 +15,9 @@ connection:
     user: postgres
     password: postgres
   test:
-    schema: postgres
+    schema: public
     host: localhost
-    dbname: postgres
+    dbname: test
     port: 5432
     user: postgres
     password: postgres

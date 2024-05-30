@@ -23,12 +23,12 @@ def get_config(config_dir: str = CONFIG_DIR) -> dict:
         Dictionary with config
     """
     config = {"dev": "config.dev.yaml", "prod": "config.yaml"}.get(
-        os.getenv("STAGE", "dev"), "config.yaml"
+        os.getenv("STAGE", "dev"), "config.dev.yaml"
     )
     config_path = Path.joinpath(Path(config_dir), config)
     try:
         # Open the file and load the file
-        with open(config_path) as f:
+        with config_path.open() as f:
             return yaml.load(f, Loader=SafeLoader)
     except yaml.YAMLError as exc:
         logger.error(exc)
