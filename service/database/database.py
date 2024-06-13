@@ -1,23 +1,29 @@
 """Database configuration."""
 
 import logging
-import os
-from typing import Tuple
 
 import sqlalchemy
 from sqlalchemy import MetaData, create_engine
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy_utils import create_database, database_exists
 
-from ..config import CONFIG_DIR
 from ..utils import get_config
 
 logger = logging.getLogger(__name__)
 
 
-def get_db_config(
-    filename: str = CONFIG_DIR, stage: str | None = None
-) -> Tuple[str, str]:
+def get_schema() -> str:
+    """Get the schema from the config file.
+
+    Returns:
+    -------
+        str: Schema name
+    """
+    full_config = get_config()
+    return full_config.database.db_schema
+
+
+def get_connection_string() -> str:
     """config.
 
     Function for reading the given section of a config file
@@ -36,29 +42,17 @@ def get_db_config(
         str: Connection string
         str: Schema (default: public)
     """
-    logger.debug(filename)
-    full_config = get_config(filename)
-    if stage is None:
-        stage = os.getenv("STAGE", "dev")
-    data_base = {}
-    if stage in full_config["connection"].keys():
-        connection_info = full_config["connection"][stage]
-        # get section, default to postgresql
-        params = connection_info.items()
-        for param in params:
-            key = param[0]
-            value = param[1]
-            data_base[key] = value
-            if key != "password":
-                logger.debug("Parameter - %s: %s", key, data_base[key])
-    else:
-        raise Exception("Connection not found in config file.")
+    connection_info = get_config().database
+    logger.debug("Establish database connection...")
+    for attribute, value in connection_info.__dict__.items():
+        if attribute != "password":
+            logger.debug("Parameter - %s: %s", attribute, value)
     return (
-        f"postgresql+psycopg://{data_base['user']}:"
-        + f"{data_base['password']}@"
-        + f"{data_base['host']}:{data_base['port']}"
-        + f"/{data_base['dbname']}"
-    ), data_base.get("schema", "public")
+        f"postgresql+psycopg://{connection_info.user}:"
+        + f"{connection_info.password}@"
+        + f"{connection_info.host}:{connection_info.port}"
+        + f"/{connection_info.db_name}"
+    )
 
 
 def create_database_with_schema_if_not_exists(
@@ -89,10 +83,8 @@ def create_database_with_schema_if_not_exists(
                 conn.execute(sqlalchemy.schema.CreateSchema(schema))
 
 
-connection_string, schema = get_db_config()
-
 SessionLocal = sessionmaker(
-    autocommit=False, autoflush=False, bind=create_engine(connection_string)
+    autocommit=False, autoflush=False, bind=create_engine(get_connection_string())
 )
 
-metadata = MetaData(schema=schema)
+metadata = MetaData(schema=get_schema())

@@ -1,18 +1,20 @@
 """Utility functions for prediction."""
 
 import logging
-import os
+import sys
 from pathlib import Path
 
 import yaml
+from pydantic import ValidationError
 from yaml.loader import SafeLoader
 
-from .config import CONFIG_DIR
+from service.config import CONFIG_DIR
+from service.schemas.config import Config
 
 logger = logging.getLogger(__name__)
 
 
-def get_config(config_dir: str = CONFIG_DIR) -> dict:
+def load_config(config_dir: str = CONFIG_DIR) -> Config:
     """Load configuration file.
 
     Args:
@@ -22,10 +24,7 @@ def get_config(config_dir: str = CONFIG_DIR) -> dict:
     -------
         Dictionary with config
     """
-    config = {"dev": "config.dev.yaml", "prod": "config.yaml"}.get(
-        os.getenv("STAGE", "dev"), "config.dev.yaml"
-    )
-    config_path = Path.joinpath(Path(config_dir), config)
+    config_path = Path.joinpath(Path(config_dir), "config.yaml")
     try:
         # Open the file and load the file
         with config_path.open() as f:
@@ -33,4 +32,13 @@ def get_config(config_dir: str = CONFIG_DIR) -> dict:
     except yaml.YAMLError as exc:
         logger.error(exc)
         logger.error("Could not load %s!", config_path)
-        return {}
+        sys.exit(1)
+
+
+def get_config() -> Config:
+    """Get configuration."""
+    try:
+        return Config.model_validate(load_config())
+    except ValidationError as e:
+        logger.error("Error in configuration file: %s", e)
+        sys.exit(1)

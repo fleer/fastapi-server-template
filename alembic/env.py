@@ -5,7 +5,7 @@ from logging.config import fileConfig
 from sqlalchemy import create_engine, pool
 
 from alembic import context
-from service.database.database import get_db_config
+from service.database.database import get_connection_string
 from service.database.models import Base
 
 # this is the Alembic Config object, which provides
@@ -39,7 +39,7 @@ def run_migrations_offline() -> None:
     script output.
 
     """
-    url, _ = get_db_config()
+    url = get_connection_string()
     # url = config.get_main_option("sqlalchemy.url")
     context.configure(
         url=url,
@@ -64,7 +64,7 @@ def run_migrations_online() -> None:
     #     prefix="sqlalchemy.",
     #     poolclass=pool.NullPool,
     # )
-    url, _ = get_db_config()
+    url = get_connection_string()
     connectable = create_engine(url, poolclass=pool.NullPool)
 
     with connectable.connect() as connection:

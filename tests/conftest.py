@@ -3,6 +3,7 @@
 import os
 from shutil import copytree
 from typing import Any, Generator
+from unittest.mock import patch
 
 import pytest
 from fastapi import FastAPI
@@ -11,22 +12,25 @@ from sqlalchemy import Connection, create_engine
 from sqlalchemy.orm import Session, sessionmaker
 
 import alembic.config
-from service.config import CONFIG_DIR
+from alembic.command import upgrade
 from service.database import database, models
 from service.routes import get_db, healthcheck
 
-connection_string, schema = database.get_db_config(CONFIG_DIR, "test")
-engine = create_engine(connection_string)
-
-SessionTesting = sessionmaker(bind=engine)
-
 ALEMBIC_CONFIG = "alembic.ini"
+
+
+def mock_connection_string() -> str:
+    """Mock string for db connection."""
+    return "postgresql+psycopg://postgres:postgres@localhost:5432/test"
+
+
+patch("service.database.database.get_connection_string", mock_connection_string).start()
 
 
 def migrate_in_memory(
     migrations_path: str,
     alembic_ini_path: str = ALEMBIC_CONFIG,
-    connection: Connection = None,
+    connection: Connection | None = None,
     revision: str = "head",
 ) -> None:
     """Migrate the database in memory.
@@ -41,7 +45,7 @@ def migrate_in_memory(
     config.set_main_option("script_location", migrations_path)
     if connection is not None:
         config.attributes["connection"] = connection
-    alembic.command.upgrade(config, revision)
+        upgrade(config, revision)
 
 
 def start_application() -> FastAPI:
@@ -60,9 +64,9 @@ def start_application() -> FastAPI:
 def pytest_sessionstart() -> None:
     """Set up the database."""
     os.environ["STAGE"] = "test"
-    db_engine = create_engine(connection_string)
+    db_engine = create_engine(database.get_connection_string())
     database.create_database_with_schema_if_not_exists(
-        db_engine, schema, reset_schema=True
+        db_engine, database.get_schema(), reset_schema=True
     )
     db_engine.dispose()
 
@@ -96,7 +100,7 @@ def app() -> Generator[FastAPI, Any, None]:
     otherwise create the tables directly.
 
     """
-    db_engine = create_engine(connection_string)
+    db_engine = create_engine(database.get_connection_string())
     with db_engine.begin() as connection:
         migrate_in_memory("alembic", ALEMBIC_CONFIG, connection)
     _app = start_application()
@@ -108,19 +112,20 @@ def app() -> Generator[FastAPI, Any, None]:
 @pytest.fixture(scope="function")
 def db_session(app: FastAPI) -> Generator[Session, Any, None]:
     """Create a database connection for testing."""
+    engine = create_engine(database.get_connection_string())
     connection = engine.connect()
     transaction = connection.begin()
-    session = SessionTesting(bind=connection)
+    test_session = sessionmaker(engine)
+    session = test_session(bind=connection)
     yield session
     session.close()
     transaction.rollback()
     connection.close()
+    engine.dispose()
 
 
 @pytest.fixture(scope="function")
-def client(
-    app: FastAPI, db_session: SessionTesting
-) -> Generator[TestClient, Any, None]:
+def client(app: FastAPI, db_session: Session) -> Generator[TestClient, Any, None]:
     """TestClient.
 
     API TestClient that uses the `db_session`
@@ -128,7 +133,7 @@ def client(
     that is injected into routes.
     """
 
-    def _get_test_db() -> Generator[SessionTesting, Any, None]:
+    def _get_test_db() -> Generator[Session, Any, None]:
         try:
             yield db_session
         finally:
