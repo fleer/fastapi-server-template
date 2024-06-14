@@ -7,7 +7,7 @@ from fastapi import FastAPI
 
 import service
 
-from .routes import healthcheck
+from .routes import healthcheck, tag
 from .utils import get_config
 
 logger = logging.getLogger(__name__)
@@ -39,3 +39,4 @@ app = FastAPI(
 )
 
 app.router.include_router(healthcheck.router)
+app.router.include_router(tag.router)

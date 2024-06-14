@@ -14,9 +14,11 @@ from sqlalchemy.orm import Session, sessionmaker
 import alembic.config
 from alembic.command import upgrade
 from service.database import database, models
-from service.routes import get_db, healthcheck
+from service.routes import get_db, healthcheck, tag
 
 ALEMBIC_CONFIG = "alembic.ini"
+engine = create_engine(database.get_connection_string())
+SessionTesting = sessionmaker(bind=engine)
 
 
 def mock_connection_string() -> str:
@@ -58,17 +60,17 @@ def start_application() -> FastAPI:
     app = FastAPI()
 
     app.include_router(healthcheck.router)
+    app.router.include_router(tag.router)
     return app
 
 
 def pytest_sessionstart() -> None:
     """Set up the database."""
     os.environ["STAGE"] = "test"
-    db_engine = create_engine(database.get_connection_string())
     database.create_database_with_schema_if_not_exists(
-        db_engine, database.get_schema(), reset_schema=True
+        engine, database.get_schema(), reset_schema=True
     )
-    db_engine.dispose()
+    engine.dispose()
 
 
 @pytest.fixture
@@ -100,13 +102,11 @@ def app() -> Generator[FastAPI, Any, None]:
     otherwise create the tables directly.
 
     """
-    db_engine = create_engine(database.get_connection_string())
-    with db_engine.begin() as connection:
+    with engine.begin() as connection:
         migrate_in_memory("alembic", ALEMBIC_CONFIG, connection)
     _app = start_application()
     yield _app
-    models.Base.metadata.drop_all(bind=db_engine)
-    db_engine.dispose()
+    models.Base.metadata.drop_all(bind=engine)
 
 
 @pytest.fixture(scope="function")
@@ -115,8 +115,7 @@ def db_session(app: FastAPI) -> Generator[Session, Any, None]:
     engine = create_engine(database.get_connection_string())
     connection = engine.connect()
     transaction = connection.begin()
-    test_session = sessionmaker(engine)
-    session = test_session(bind=connection)
+    session = SessionTesting(bind=connection)
     yield session
     session.close()
     transaction.rollback()
