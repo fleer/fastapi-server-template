@@ -1,0 +1,9 @@
+name: Test and create docker image
+
+on:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  call-test-workflow:
+    uses: ./.github/workflows/python_test.yaml

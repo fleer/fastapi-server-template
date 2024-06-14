@@ -1,0 +1,53 @@
+name: Linting and testing
+
+on:
+  workflow_call:
+
+env:
+  POSTGRES_HOST: localhost
+  POSTGRES_USER: postgres
+  POSTGRES_PASSWORD: postgres
+  POSTGRES_DATABASE: test
+  POSTGRES_PORT: 5432
+
+jobs:
+  lint-and-test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.10", "3.11", "3.12"]
+    # Service containers to run with `container-job`
+    services:
+      postgres:
+        # Docker Hub image
+        image: postgres
+        # Set health checks to wait until postgres has started
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
+
+    steps:
+      - name: checkout repository
+        uses: actions/checkout@v4
+      - name: set up python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Install poetry
+        uses: abatilo/actions-poetry@v3
+      - name: install dependencies
+        run: |
+          poetry install
+      - name: setup credentials for postgres
+        run: |
+          sh ./replace_placeholders.sh
+      - name: lint with ruff
+        run: |
+          poetry run ruff check .
+      - name: test with pytest
+        run: |
+          poetry run pytest tests --doctest-modules
