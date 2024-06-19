@@ -11,4 +11,8 @@ All hooks can be manually executed via `pre-commit run --all-files`.
 
 ### Docker
 
+```bash
+docker run --rm -it -v $(pwd)/config:/app/config -p 8000:8000 test
+```
+
 #### Docker Compose

@@ -43,6 +43,17 @@ ENV PYTHONPATH="/app:$PYTHONPATH"
 
 FROM base AS builder-base
 
+ARG BUILD_VERSION="v0.0.0-dev"
+
+# copy the dependencies file to the working directory
+COPY poetry.lock pyproject.toml README.md ./
+COPY service/ ./service/
+
+# Set gittag as version
+# Only works if version in pyproject.toml is 0.0.0
+RUN \
+  [ ${#BUILD_VERSION} -ge 1 ] && sed -i 's/v0.0.0/'"$BUILD_VERSION"'/g' pyproject.toml || echo "No version set"
+
 RUN \
   apt-get update && \
   apt-get install -y curl ca-certificates build-essential
@@ -53,15 +64,10 @@ RUN \
 RUN --mount=type=cache,target=/root/.cache \
     curl -sSL https://install.python-poetry.org | python -
 
-# used to init dependencies
-WORKDIR /app
-
-# copy the dependencies file to the working directory
-COPY poetry.lock pyproject.toml ./
-
 # install runtime deps to $VIRTUAL_ENV
 RUN --mount=type=cache,target=/root/.cache \
-    poetry install --no-root --only main
+    # Build Package to /dist folder
+    poetry build
 
 FROM base as runtime
 
@@ -87,17 +93,20 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get update && \
     libpq-dev && \
     apt-get clean
 
-# copy in our built poetry + venv
-COPY --from=builder-base $POETRY_HOME $POETRY_HOME
-COPY --from=builder-base $VIRTUAL_ENV $VIRTUAL_ENV
+# Copy python packages from python-deps stage
+COPY --from=builder-base /app/dist ./dist
 
-# copy the content of the local src directory to the working directory
-COPY service/ ./service/
-COPY config/ ./config/
-COPY replace_placeholders.sh .
-COPY README.md .
+# Install the wheel
+RUN pip install ./dist/*.whl
 
+RUN mkdir -p /config
+COPY logging_config/ ./logging_config/
 
-ENTRYPOINT [ "sh", "./replace_placeholders.sh" ]
+# Alembic
+COPY alembic.ini alembic.ini
+COPY entrypoint.sh entrypoint.sh
+COPY alembic/ alembic/
+RUN chmod +x entrypoint.sh
+
 # command to run on container start
-CMD uvicorn service.api:app --host 0.0.0.0 --port 8000
+ENTRYPOINT ["./entrypoint.sh"]

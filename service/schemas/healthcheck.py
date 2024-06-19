@@ -8,7 +8,7 @@ class HealthCheckModel(BaseModel):
 
     Simple response for life check of the service.
 
-    Attributes
+    Attributes:
     ----------
     status: str
         The status of the service

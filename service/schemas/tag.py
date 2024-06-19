@@ -11,7 +11,7 @@ class TagBaseModel(CamelModel):
     Simple response Model for creating and
     reading tags.
 
-    Attributes
+    Attributes:
     ----------
     tag: str
         Given tag
@@ -34,7 +34,7 @@ class TagModel(TagBaseModel):
     Simple response Model for creating and
     reading tags.
 
-    Attributes
+    Attributes:
     ----------
     tag: str
         Given tag

@@ -1,8 +1,8 @@
 """Schadenrouting API Gateway."""
 
 import logging
-from pathlib import Path
 
+import uvicorn
 from fastapi import FastAPI
 
 import service
@@ -17,7 +17,11 @@ config = get_config()
 
 version = service.__getattr__("__version__")
 
-description = Path("README.md").read_text()
+description = """
+# Service API Gateway.
+
+Here is a small description of the project.
+"""
 
 tags_metadata = [
     {
@@ -33,10 +37,14 @@ app = FastAPI(
     contact={
         "name": "fleer",
         "url": "https://github.com/fleer/fastapi-server-template",
-        "email": "",
     },
     openapi_tags=tags_metadata,
 )
 
 app.router.include_router(healthcheck.router)
 app.router.include_router(tag.router)
+
+
+def start() -> None:
+    """Launched with `poetry run start` at root level."""
+    uvicorn.run("service.api:app", host="0.0.0.0", port=8000)

@@ -7,8 +7,7 @@ readme = "README.md"
 packages = [{ include = "service" }]
 
 [tool.poetry.scripts]
-server_start = 'uvicorn service.api:app'
-server_start_dev = 'uvicorn service.api:app --reload'
+server_start = 'service.api:start'
 
 [tool.poetry.dependencies]
 python = "^3.10"

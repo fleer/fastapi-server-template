@@ -18,11 +18,11 @@ def load_config(config_dir: str = CONFIG_DIR) -> Config:
     """Load configuration file.
 
     Args:
-        config_path: path to configuration file
+        config_dir (str): path to configuration file
 
     Returns:
     -------
-        Dictionary with config
+        Config: Dictionary with config
     """
     config_path = Path.joinpath(Path(config_dir), "config.yaml")
     try:
