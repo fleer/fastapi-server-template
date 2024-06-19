@@ -47,7 +47,7 @@ ARG BUILD_VERSION="v0.0.0-dev"
 
 # copy the dependencies file to the working directory
 COPY poetry.lock pyproject.toml README.md ./
-COPY service/ ./service/
+COPY src/ ./src/
 
 # Set gittag as version
 # Only works if version in pyproject.toml is 0.0.0
@@ -62,12 +62,12 @@ RUN \
 # The --mount will mount the buildx cache directory to where
 # Poetry and Pip store their cache so that they can re-use it
 RUN --mount=type=cache,target=/root/.cache \
-    curl -sSL https://install.python-poetry.org | python -
+  curl -sSL https://install.python-poetry.org | python -
 
 # install runtime deps to $VIRTUAL_ENV
 RUN --mount=type=cache,target=/root/.cache \
-    # Build Package to /dist folder
-    poetry build
+  # Build Package to /dist folder
+  poetry build
 
 FROM base as runtime
 
@@ -88,10 +88,10 @@ EXPOSE 8000
 WORKDIR /app
 
 RUN DEBIAN_FRONTEND=noninteractive apt-get update && \
-    apt-get install -y --no-install-recommends \
-    ca-certificates \
-    libpq-dev && \
-    apt-get clean
+  apt-get install -y --no-install-recommends \
+  ca-certificates \
+  libpq-dev && \
+  apt-get clean
 
 # Copy python packages from python-deps stage
 COPY --from=builder-base /app/dist ./dist
