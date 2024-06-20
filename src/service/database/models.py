@@ -1,6 +1,6 @@
-"""Database Models.
+"""Database Tables.
 
-Module with database definitions.
+Define the database tables for the ORM.
 """
 
 from datetime import datetime
@@ -19,9 +19,14 @@ Base = declarative_base(metadata=metadata)
 
 
 class Test(Base):
-    """Test class.
+    """Definition of the test table.
 
-    Class for test table.
+    Attributes:
+        __tablename__ (str): Table name
+        id (int): Row ID
+        tag (str): Desired tag
+        timestamp (datetime): Current timestamp
+                                is stored here
     """
 
     __tablename__ = "test"

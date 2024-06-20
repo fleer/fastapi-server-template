@@ -1,4 +1,10 @@
-"""Database configuration."""
+"""Database configuration.
+
+Load the database configuration and manage the connection to the database.
+
+Provides functions for creating the connection string
+and creating the database with the given schema if it not exists.
+"""
 
 import logging
 
@@ -24,14 +30,9 @@ def get_schema() -> str:
 
 
 def get_connection_string() -> str:
-    """config.
+    """Create URI for database access.
 
     Function for reading the given section of a config file
-
-    Args:
-        filename (str, optional): Filename of the config file in root folder.
-        from_env (boolean, optional): Fetch values from ENV variable,
-                                      if exists
 
     Raises:
     ------
@@ -63,9 +64,9 @@ def create_database_with_schema_if_not_exists(
     Manage the creation of the database and schema.
 
     Args:
-        engine: Database engine
-        schema: Used schema
-        reset_schema: Should the schema be cleared.
+        engine (Engine): Database engine
+        schema (str): Used schema
+        reset_schema (bool): Should the schema be cleared.
     """
     inspector = sqlalchemy.inspect(engine)
     if not database_exists(engine.url):

@@ -1,0 +1,111 @@
+site_name: Service
+repo_url: https://github.com/fleer/fastapi-server-template
+repo_name: fleer/fastapi-server-template
+edit_uri: edit/main/docs/
+site_url: https://fleer.github.io/fastapi-server-template
+theme:
+  name: material
+  icon:
+    repo: fontawesome/brands/github
+  features:
+    # Navigation
+    - navigation.tabs
+    - navigation.sections
+    - navigation.top
+    # Enable table of contents
+    - navigation.instant
+    # Visible progress of current page
+    - navigation.instant.progress
+    # Navigation bar on left always rendered
+    - toc.integrate
+    - toc.integrate
+    - search.suggest
+    - search.highlight
+    - content.tabs.link
+    - content.code.annotation
+    - content.code.copy
+    - content.action.edit
+    - content.action.view
+    # Enable code copy button in code blocks
+    - content.code.copy
+    # Enable code select button in code blocks
+    - content.code.select
+    # Enable code annotation in code block
+    - content.code.annotate
+  language: en
+
+  # Light and Dark Mode
+  palette:
+    - scheme: default
+      toggle:
+        icon: material/toggle-switch-off-outline
+        name: Switcht to dark mode
+      primary: #003e75
+      accent: lightblue
+    - scheme: slate
+      toggle:
+        icon: material/toggle-switch
+        name: Switcht to light mode
+      primary: #003e75
+      accent: lightgrey
+
+plugins:
+  - search
+  # Docstring parsing from code
+  - mkdocstrings:
+      handlers:
+        python:
+          paths: [src]
+          options:
+            show_source: true
+            show_symbol_type_heading: true
+            show_symbol_type_toc: true
+            allow_inspection: true
+            show_bases: true
+            docstring_style: google
+  - gen-files:
+      scripts:
+        - scripts/gen_ref_pages.py
+  - literate-nav:
+      nav_file: SUMMARY.md
+  - section-index
+
+# Configure the strictness of MkDocs' diagnostic messages when validating links to documents.
+validation:
+  omitted_files: warn
+  absolute_links: warn # Or 'relative_to_docs' - new in MkDocs 1.6
+  unrecognized_links: warn
+  anchors: warn # New in MkDocs 1.6
+  # Settings to recognize absolute links and validate them:
+  links:
+    absolute_links: relative_to_docs
+    anchors: warn
+    unrecognized_links: warn
+
+markdown_extensions:
+  # Better handling of bold, italic
+  - pymdownx.betterem
+  # Syntax highlighting
+  - pymdownx.highlight:
+      anchor_linenums: true
+  - pymdownx.inlinehilite
+  # Admonition boxes
+  - admonition
+  # Fan-fan-out
+  - pymdownx.details
+  # Allow annotations
+  - attr_list
+  - md_in_html
+  - pymdownx.superfences:
+      # Mermaid
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format:
+            !!python/name:pymdownx.superfences.fence_code_format # Page tree
+
+
+nav:
+  - Home: index.md
+  # defer to gen-files + literate-nav
+  - Code Reference: reference/
