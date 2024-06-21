@@ -26,5 +26,8 @@ async def healthcheck() -> HealthCheckModel:
 
     Simple endpoint to check if the app is running.
     Can be used for a liveness probe in Kubernetes.
+
+    Returns:
+        HealthCheckModel: Response with status ok
     """
     return {"status": "ok"}

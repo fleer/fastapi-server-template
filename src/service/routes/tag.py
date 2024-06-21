@@ -31,13 +31,11 @@ async def create_tag(request: TagBaseModel, db: Session = Depends(get_db)) -> Ta
     Function for create a new tag in database.
 
     Args:
-    ----
-        request: Request
-        db: Database session
+        request (TagBaseModel): Request
+        db (Session): Database session
 
     Returns:
-    -------
-        response: TagModel
+        TagModel: Response with new Tag
     """
     db_tag = models.Test(
         tag=request.tag,
