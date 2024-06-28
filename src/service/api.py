@@ -6,9 +6,8 @@ import uvicorn
 from fastapi import FastAPI
 
 import service
-
-from .routes import healthcheck, tag
-from .utils import get_config
+from service.routes import healthcheck, tag
+from service.utils import get_config
 
 logger = logging.getLogger(__name__)
 

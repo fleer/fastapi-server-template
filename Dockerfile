@@ -40,19 +40,11 @@ WORKDIR /app
 
 ENV PYTHONPATH="/app:$PYTHONPATH"
 
-
 FROM base AS builder-base
-
-ARG BUILD_VERSION="v0.0.0-dev"
 
 # copy the dependencies file to the working directory
 COPY poetry.lock pyproject.toml README.md ./
 COPY src/ ./src/
-
-# Set gittag as version
-# Only works if version in pyproject.toml is 0.0.0
-RUN \
-  [ ${#BUILD_VERSION} -ge 1 ] && sed -i 's/v0.0.0/'"$BUILD_VERSION"'/g' pyproject.toml || echo "No version set"
 
 RUN \
   apt-get update && \
@@ -71,16 +63,9 @@ RUN --mount=type=cache,target=/root/.cache \
 
 FROM base as runtime
 
-RUN \
-  apt-get update && \
-  apt-get install -y gettext-base
-
 LABEL maintainer="fleer"
 
 ENV STAGE prod
-
-ARG BUILD_VERSION="0.0.0-dev"
-ENV VERSION=$BUILD_VERSION
 
 EXPOSE 8000
 

@@ -2,11 +2,11 @@
 
 from logging.config import fileConfig
 
+from service.database.database import get_connection_string
+from service.database.models import Base
 from sqlalchemy import create_engine, pool
 
 from alembic import context
-from service.database.database import get_connection_string
-from service.database.models import Base
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.

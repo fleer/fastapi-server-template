@@ -13,7 +13,7 @@ from sqlalchemy import MetaData, create_engine
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy_utils import create_database, database_exists
 
-from ..utils import get_config
+from service.utils import get_config
 
 logger = logging.getLogger(__name__)
 

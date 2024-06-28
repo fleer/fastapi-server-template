@@ -8,13 +8,13 @@ from unittest.mock import patch
 import pytest
 from fastapi import FastAPI
 from fastapi.testclient import TestClient
+from service.database import database, models
+from service.routes import get_db, healthcheck, tag
 from sqlalchemy import Connection, create_engine
 from sqlalchemy.orm import Session, sessionmaker
 
 import alembic.config
 from alembic.command import upgrade
-from service.database import database, models
-from service.routes import get_db, healthcheck, tag
 
 ALEMBIC_CONFIG = "alembic.ini"
 engine = create_engine(database.get_connection_string())
