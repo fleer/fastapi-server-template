@@ -133,3 +133,35 @@ docker compose up --remove-orphans --build
 
 Install [pre-commit](https://pre-commit.com) and initialize the tool via `pre-commit install`.
 All hooks can be manually executed via `pre-commit run --all-files`.
+
+### Python Semantic Release
+
+[Python Semantic Release](https://python-semantic-release.readthedocs.io/en/latest/index.html) is utilized to automatically bump the version on each commit based on [semantic versioning](https://semver.org/spec/v2.0.0.html) conventions.
+Per default, the git commit guidelines have to be provided in the [angular style](https://github.com/angular/angular.js/blob/master/DEVELOPERS.md#-git-commit-guidelines).
+
+#### Commit Message Format
+
+- Header: Includes type, scope (optional), and subject.
+- Body: Details about the change.
+- Footer: Notes on breaking changes or issue references.
+
+```
+<type>(<scope>): <subject>
+<BLANK LINE>
+<body>
+<BLANK LINE>
+<footer>
+```
+
+#### Commit Types
+
+Commit message types determine the next version of your app. For example, the feat type increases the MINOR version number, while the fix type increases the PATCH number. Here are the standard types:
+
+- `feat`: New feature
+- `fix`: Bug fix
+- `docs`: Documentation changes
+- `style`: Code style changes
+- `refactor`: Code changes without fixing bugs or adding features
+- `perf`: Performance improvements
+- `test`: Testing changes
+- `chore`: Build process or auxiliary tool changes

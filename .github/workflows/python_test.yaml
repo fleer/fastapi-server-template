@@ -21,6 +21,11 @@ jobs:
       postgres:
         # Docker Hub image
         image: postgres
+        # Provide the password for postgres
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: test
         # Set health checks to wait until postgres has started
         options: >-
           --health-cmd pg_isready
@@ -41,10 +46,7 @@ jobs:
         uses: abatilo/actions-poetry@v3
       - name: install dependencies
         run: |
-          poetry install
-      - name: setup credentials for postgres
-        run: |
-          sh ./replace_placeholders.sh
+          poetry install --with dev
       - name: lint with ruff
         run: |
           poetry run ruff check .
