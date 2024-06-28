@@ -47,9 +47,6 @@ jobs:
       - name: install dependencies
         run: |
           poetry install
-      - name: setup credentials for postgres
-        run: |
-          sh ./replace_placeholders.sh
       - name: lint with ruff
         run: |
           poetry run ruff check .
