@@ -46,7 +46,7 @@ jobs:
         uses: abatilo/actions-poetry@v3
       - name: install dependencies
         run: |
-          poetry install
+          poetry install --with dev
       - name: lint with ruff
         run: |
           poetry run ruff check .
