@@ -134,6 +134,13 @@ docker compose up --remove-orphans --build
 Install [pre-commit](https://pre-commit.com) and initialize the tool via `pre-commit install`.
 All hooks can be manually executed via `pre-commit run --all-files`.
 
+### Alembic
+
+The database is managed via [alembic](https://alembic.sqlalchemy.org/en/latest/index.html). Thus, all changes that have to be made to the
+database tables have to be managed via this tool in order to have a consistent
+history. While applying changes to the database tables, alembic stores information
+in the `alembic_version` table.
+
 ### Python Semantic Release
 
 [Python Semantic Release](https://python-semantic-release.readthedocs.io/en/latest/index.html) is utilized to automatically bump the version on each commit based on [semantic versioning](https://semver.org/spec/v2.0.0.html) conventions.
