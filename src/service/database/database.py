@@ -17,6 +17,8 @@ from service.utils import get_config
 
 logger = logging.getLogger(__name__)
 
+SCHEMA = "public"
+
 
 def get_schema() -> str:
     """Get the schema from the config file.
@@ -25,8 +27,7 @@ def get_schema() -> str:
     -------
         str: Schema name
     """
-    full_config = get_config()
-    return full_config.database.db_schema
+    return SCHEMA
 
 
 def get_connection_string() -> str:

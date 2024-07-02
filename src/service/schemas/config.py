@@ -9,7 +9,6 @@ class DatabaseConfig(BaseModel):
     Simple class to define the database configuration.
     """
 
-    db_schema: str
     host: str
     db_name: str
     port: int

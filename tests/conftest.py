@@ -8,17 +8,15 @@ from unittest.mock import patch
 import pytest
 from fastapi import FastAPI
 from fastapi.testclient import TestClient
-from service.database import database, models
-from service.routes import get_db, healthcheck, tag
-from sqlalchemy import Connection, create_engine
-from sqlalchemy.orm import Session, sessionmaker
+from service.database import database
+from service.routes import healthcheck, tag
+from sqlalchemy import create_engine, schema
+from sqlalchemy_utils import create_database, database_exists, drop_database
 
 import alembic.config
 from alembic.command import upgrade
 
 ALEMBIC_CONFIG = "alembic.ini"
-engine = create_engine(database.get_connection_string())
-SessionTesting = sessionmaker(bind=engine)
 
 
 def mock_connection_string() -> str:
@@ -32,7 +30,6 @@ patch("service.database.database.get_connection_string", mock_connection_string)
 def migrate_in_memory(
     migrations_path: str,
     alembic_ini_path: str = ALEMBIC_CONFIG,
-    connection: Connection | None = None,
     revision: str = "head",
 ) -> None:
     """Migrate the database in memory.
@@ -45,32 +42,22 @@ def migrate_in_memory(
     """
     config = alembic.config.Config(alembic_ini_path)
     config.set_main_option("script_location", migrations_path)
-    if connection is not None:
-        config.attributes["connection"] = connection
-        upgrade(config, revision)
-
-
-def start_application() -> FastAPI:
-    """Start FastAPI application.
-
-    Returns:
-    -------
-        FastAPI: FastAPI application
-    """
-    app = FastAPI()
-
-    app.include_router(healthcheck.router)
-    app.router.include_router(tag.router)
-    return app
+    upgrade(config, revision)
 
 
 def pytest_sessionstart() -> None:
     """Set up the database."""
     os.environ["STAGE"] = "test"
-    database.create_database_with_schema_if_not_exists(
-        engine, database.get_schema(), reset_schema=True
-    )
-    engine.dispose()
+    url = database.get_connection_string()
+    if not database_exists(url):
+        create_database(url)
+
+
+def pytest_sessionfinish() -> None:
+    """Delete the database."""
+    url = database.get_connection_string()
+    if database_exists(url):
+        drop_database(url)
 
 
 @pytest.fixture
@@ -94,50 +81,36 @@ def datadir(tmpdir: str, request: pytest.FixtureRequest) -> str:
     return tmpdir
 
 
-@pytest.fixture(scope="function")
-def app() -> Generator[FastAPI, Any, None]:
+@pytest.fixture(scope="function", autouse=True)
+def db_initializer() -> Generator[pytest.Session, Any, None]:
     """Create a fresh database on each test case.
 
     Use alembic if the config file exists,
     otherwise create the tables directly.
 
     """
-    with engine.begin() as connection:
-        migrate_in_memory("alembic", ALEMBIC_CONFIG, connection)
-    _app = start_application()
-    yield _app
-    models.Base.metadata.drop_all(bind=engine)
+    migrate_in_memory("alembic", ALEMBIC_CONFIG)
+    print("\n----- CREATE TEST DB INSTANCE POOL\n")
+    yield
+    with create_engine(database.get_connection_string()).connect() as connection:
+        with connection.begin():
+            connection.execute(
+                schema.DropSchema(database.get_schema(), cascade=True, if_exists=True)
+            )
 
 
 @pytest.fixture(scope="function")
-def db_session(app: FastAPI) -> Generator[Session, Any, None]:
-    """Create a database connection for testing."""
-    engine = create_engine(database.get_connection_string())
-    connection = engine.connect()
-    transaction = connection.begin()
-    session = SessionTesting(bind=connection)
-    yield session
-    session.close()
-    transaction.rollback()
-    connection.close()
-    engine.dispose()
+def client() -> Generator[TestClient, Any, None]:
+    """Start FastAPI application.
 
-
-@pytest.fixture(scope="function")
-def client(app: FastAPI, db_session: Session) -> Generator[TestClient, Any, None]:
-    """TestClient.
-
-    API TestClient that uses the `db_session`
-    fixture to override the `get_db` dependency
-    that is injected into routes.
+    Returns:
+    -------
+        FastAPI: FastAPI application as TestClient
     """
+    app = FastAPI()
 
-    def _get_test_db() -> Generator[Session, Any, None]:
-        try:
-            yield db_session
-        finally:
-            pass
+    app.include_router(healthcheck.router)
+    app.include_router(tag.router)
 
-    app.dependency_overrides[get_db] = _get_test_db
     with TestClient(app) as client:
         yield client

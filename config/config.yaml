@@ -1,5 +1,4 @@
 database:
-  db_schema: public
   host: localhost
   db_name: postgres
   port: 5432
