@@ -7,6 +7,13 @@ class DatabaseConfig(BaseModel):
     """DatabaseConfig schema class.
 
     Simple class to define the database configuration.
+
+    Attributes:
+        host (str): Database host
+        db_name (str): Database name
+        port (int): Database port
+        user (str): Database user
+        password (str): Database password
     """
 
     host: str
@@ -22,6 +29,8 @@ class Config(BaseModel):
     Full configuration schema for service.
     It mainly contains the version and connection details.
 
+    Attributes:
+        database (DatabaseConfig): Database configuration
     """
 
     database: DatabaseConfig

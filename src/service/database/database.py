@@ -16,7 +16,6 @@ from sqlalchemy_utils import create_database, database_exists
 from service.utils import get_config
 
 logger = logging.getLogger(__name__)
-
 SCHEMA = "public"
 
 
