@@ -1,5 +1,33 @@
 # CHANGELOG
 
+## v0.1.1 (2024-07-12)
+
+### Fix
+
+* fix(conftest): finally fixed database creation problem ([`035ba64`](https://github.com/fleer/fastapi-server-template/commit/035ba64c0100b39e10fbd6e3c2a7d7553424da9b))
+
+### Unknown
+
+* docs:config.py Added docs to config class ([`6e68cd1`](https://github.com/fleer/fastapi-server-template/commit/6e68cd184748313f152e532e68e9b387028a6edd))
+
+* test:alembic Fixed problem with non-exisiting schemas
+
+Added sleep to mitigate long creation processes ([`a681bbb`](https://github.com/fleer/fastapi-server-template/commit/a681bbbb70e0b9fb0f4acb45d749b897e1f43421))
+
+* build:poetry plugin update ([`79550aa`](https://github.com/fleer/fastapi-server-template/commit/79550aa02f2a92659ef501224d155e6f7416997d))
+
+* fix:db
+
+Fixed DB schema definition and tests ([`e340578`](https://github.com/fleer/fastapi-server-template/commit/e34057866f96c0fd895920dedb755da375ef4679))
+
+* docs:alembic
+
+Added alembic to readme ([`1d1e2da`](https://github.com/fleer/fastapi-server-template/commit/1d1e2da51e9bdf492d062ab5cd644f30f627c69a))
+
+* fix:alembic
+
+Added schema creation ([`1f84c5f`](https://github.com/fleer/fastapi-server-template/commit/1f84c5fa132ec3221eb81c7896b2012c83d37405))
+
 ## v0.1.0 (2024-06-28)
 
 ### Ci
