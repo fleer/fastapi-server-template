@@ -10,8 +10,9 @@ import pytest
 from fastapi import FastAPI
 from fastapi.testclient import TestClient
 from service.database import database
-from service.routes import healthcheck, tag
+from service.routes import get_db, healthcheck, tag
 from sqlalchemy import create_engine, schema
+from sqlalchemy.orm import Session, sessionmaker
 from sqlalchemy_utils import create_database, database_exists, drop_database
 
 import alembic.config
@@ -103,17 +104,42 @@ def db_initializer() -> Generator[pytest.Session, Any, None]:
 
 
 @pytest.fixture(scope="function")
-def client() -> Generator[TestClient, Any, None]:
-    """Start FastAPI application.
+def db_session() -> Generator[Session, Any, None]:
+    """Create a database connection for testing."""
+    with create_engine(database.get_connection_string()).connect() as connection:
+        transaction = connection.begin()
 
-    Returns:
-    -------
-        FastAPI: FastAPI application as TestClient
+        session_local = sessionmaker(
+            autocommit=False,
+            autoflush=False,
+            bind=create_engine(database.get_connection_string()),
+        )
+        session = session_local()
+        yield session
+        session.close()
+        transaction.rollback()
+
+
+@pytest.fixture(scope="function")
+def client(db_session: Session) -> Generator[TestClient, Any, None]:
+    """TestClient.
+
+    API TestClient that uses the `db_session`
+    fixture to override the `get_db` dependency
+    that is injected into routes.
     """
+
+    def _get_test_db() -> Generator[Session, Any, None]:
+        try:
+            yield db_session
+        finally:
+            pass
+
     app = FastAPI()
 
     app.include_router(healthcheck.router)
     app.include_router(tag.router)
 
+    app.dependency_overrides[get_db] = _get_test_db
     with TestClient(app) as client:
         yield client
