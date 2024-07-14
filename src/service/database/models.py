@@ -18,7 +18,7 @@ from service.database.database import metadata
 Base = declarative_base(metadata=metadata)
 
 
-class Test(Base):
+class Tag(Base):
     """Definition of the test table.
 
     Attributes:
@@ -29,7 +29,7 @@ class Test(Base):
                                 is stored here
     """
 
-    __tablename__ = "test"
+    __tablename__ = "tag"
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
     tag: Mapped[str] = mapped_column(String, comment="Tag")

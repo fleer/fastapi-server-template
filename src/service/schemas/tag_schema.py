@@ -5,7 +5,7 @@ from datetime import datetime
 from service.schemas.camel_case import CamelModel
 
 
-class TagBaseModel(CamelModel):
+class TagInput(CamelModel):
     """Class with tag information.
 
     Simple response Model for creating and
@@ -28,7 +28,7 @@ class TagBaseModel(CamelModel):
     }
 
 
-class TagModel(TagBaseModel):
+class TagOutput(CamelModel):
     """Class with tag information.
 
     Simple response Model for creating and

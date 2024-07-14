@@ -175,4 +175,4 @@ Commit message types determine the next version of your app. For example, the fe
 
 ## Literature
 
-- https://medium.com/@kacperwlodarczyk/fast-api-repository-pattern-and-service-layer-dad43354f07a
+- [Fast API — Repository Pattern and Service Layer](https://medium.com/@kacperwlodarczyk/fast-api-repository-pattern-and-service-layer-dad43354f07a)

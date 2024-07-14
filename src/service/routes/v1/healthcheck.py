@@ -3,7 +3,7 @@
 import logging
 
 from fastapi import APIRouter, status
-from service.schemas.healthcheck import HealthCheckModel
+from service.schemas.healthcheck_schema import HealthCheckOutput
 
 logger = logging.getLogger(__name__)
 
@@ -16,11 +16,11 @@ router = APIRouter(
 
 @router.get(
     "/",
-    response_model=HealthCheckModel,
+    response_model=HealthCheckOutput,
     response_description="Simple Healthcheck",
     status_code=status.HTTP_200_OK,
 )
-async def healthcheck() -> HealthCheckModel:
+async def healthcheck() -> HealthCheckOutput:
     """Healthcheck endpoint.
 
     Simple endpoint to check if the app is running.

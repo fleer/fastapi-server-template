@@ -16,7 +16,7 @@ import yaml
 from pydantic import ValidationError
 from yaml.loader import SafeLoader
 
-from service.schemas.config import Config
+from service.schemas.config_schema import Config
 
 logger = logging.getLogger(__name__)
 

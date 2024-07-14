@@ -3,9 +3,9 @@
 import logging
 
 from fastapi import APIRouter, Depends, status
-from service.database import models
 from service.routes import get_db
-from service.schemas.tag import TagBaseModel, TagModel
+from service.schemas.tag_schema import TagInput, TagOutput
+from service.service.tag_service import TagService
 from sqlalchemy.orm import Session
 
 logger = logging.getLogger(__name__)
@@ -19,27 +19,18 @@ router = APIRouter(
 
 @router.post(
     "",
-    response_model=TagModel,
+    response_model=TagOutput,
     response_description="Create a new tag",
     status_code=status.HTTP_201_CREATED,
 )
-async def create_tag(request: TagBaseModel, db: Session = Depends(get_db)) -> TagModel:
-    """Create a new tag.
-
-    Function for create a new tag in database.
+async def create_entry(request: TagInput, db: Session = Depends(get_db)) -> TagOutput:
+    """Asynchronously create a new measurement entry.
 
     Args:
-        request (TagBaseModel): Request
-        db (Session): Database session
+        request (TagInput): The input data for the new Tag.
+        db (Session, optional): The database session. Defaults to Depends(get_db).
 
     Returns:
-        TagModel: Response with new Tag
+        TagOutput: The created Tag.
     """
-    db_tag = models.Test(
-        tag=request.tag,
-    )
-    logging.debug("New tag: %s", db_tag)
-    db.add(db_tag)
-    db.commit()
-    db.refresh(db_tag)
-    return db_tag
+    return TagService(db).create(request)

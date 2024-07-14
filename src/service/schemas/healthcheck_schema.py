@@ -3,7 +3,7 @@
 from pydantic import BaseModel
 
 
-class HealthCheckModel(BaseModel):
+class HealthCheckOutput(BaseModel):
     """Class with health check information.
 
     Simple response for life check of the service.
