@@ -172,3 +172,7 @@ Commit message types determine the next version of your app. For example, the fe
 - `perf`: Performance improvements
 - `test`: Testing changes
 - `chore`: Build process or auxiliary tool changes
+
+## Literature
+
+- https://medium.com/@kacperwlodarczyk/fast-api-repository-pattern-and-service-layer-dad43354f07a

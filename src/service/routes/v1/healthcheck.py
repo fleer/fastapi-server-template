@@ -3,8 +3,7 @@
 import logging
 
 from fastapi import APIRouter, status
-
-from ..schemas.healthcheck import HealthCheckModel
+from service.schemas.healthcheck import HealthCheckModel
 
 logger = logging.getLogger(__name__)
 

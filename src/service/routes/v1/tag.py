@@ -3,12 +3,10 @@
 import logging
 
 from fastapi import APIRouter, Depends, status
-from sqlalchemy.orm import Session
-
 from service.database import models
+from service.routes import get_db
 from service.schemas.tag import TagBaseModel, TagModel
-
-from . import get_db
+from sqlalchemy.orm import Session
 
 logger = logging.getLogger(__name__)
 
@@ -20,7 +18,7 @@ router = APIRouter(
 
 
 @router.post(
-    "/",
+    "",
     response_model=TagModel,
     response_description="Create a new tag",
     status_code=status.HTTP_201_CREATED,

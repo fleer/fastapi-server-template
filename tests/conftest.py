@@ -2,7 +2,6 @@
 
 import os
 from shutil import copytree
-from time import sleep
 from typing import Any, Generator
 from unittest.mock import patch
 
@@ -10,7 +9,8 @@ import pytest
 from fastapi import FastAPI
 from fastapi.testclient import TestClient
 from service.database import database
-from service.routes import get_db, healthcheck, tag
+from service.routes import get_db
+from service.routes.v1 import healthcheck, tag
 from sqlalchemy import create_engine, schema
 from sqlalchemy.orm import Session, sessionmaker
 from sqlalchemy_utils import create_database, database_exists, drop_database
@@ -45,8 +45,6 @@ def migrate_in_memory(
     config = alembic.config.Config(alembic_ini_path)
     config.set_main_option("script_location", migrations_path)
     upgrade(config, revision)
-    # HACK: Add sleep in order to prevent execution of tests befor db upgrade
-    sleep(1)
 
 
 def pytest_sessionstart() -> None:

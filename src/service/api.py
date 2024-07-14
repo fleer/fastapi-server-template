@@ -3,10 +3,10 @@
 import logging
 
 import uvicorn
-from fastapi import FastAPI
+from fastapi import APIRouter, FastAPI
 
 import service
-from service.routes import healthcheck, tag
+from service.routes.v1 import healthcheck, tag
 from service.utils import get_config
 
 logger = logging.getLogger(__name__)
@@ -39,9 +39,10 @@ app = FastAPI(
     },
     openapi_tags=tags_metadata,
 )
+router = APIRouter(prefix="/api/v1")
 
-app.router.include_router(healthcheck.router)
-app.router.include_router(tag.router)
+router.include_router(healthcheck.router)
+router.include_router(tag.router)
 
 
 def start() -> None:
