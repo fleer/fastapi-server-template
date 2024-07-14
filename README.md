@@ -173,6 +173,25 @@ Commit message types determine the next version of your app. For example, the fe
 - `test`: Testing changes
 - `chore`: Build process or auxiliary tool changes
 
-## Literature
+## Good Practice
+
+### Service-Repository Pattern
+
+#### Repository Pattern
+
+     The Repository pattern abstracts the data access layer by offering a clean interface for
+     interacting with the underlying data storage, whether it’s a database, external API,
+     or any other data source. It encapsulates the logic for querying, creating, updating,
+     and deleting data entities, thereby promoting the separation of concerns and enhancing the
+     maintainability and testability of the codebase.
+
+#### Service Layer
+
+     The service layer acts as the intermediary between the API endpoints and the repository layer.
+     It’s responsible for implementing business logic, orchestrating interactions between different
+     repositories, and performing necessary validations or additional operations.
+
+#### Literature
 
 - [Fast API — Repository Pattern and Service Layer](https://medium.com/@kacperwlodarczyk/fast-api-repository-pattern-and-service-layer-dad43354f07a)
+- [Service-Repository Pattern](https://medium.com/@ankitpal181/service-repository-pattern-802540254019)
