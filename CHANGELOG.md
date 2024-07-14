@@ -1,10 +1,30 @@
 # CHANGELOG
 
+## v0.2.0 (2024-07-14)
+
+### Unknown
+
+* Merge branch &#39;main&#39; of github.com:fleer/fastapi-server-template ([`fb4d1f2`](https://github.com/fleer/fastapi-server-template/commit/fb4d1f23fb36cff872afcdcd1e1ddf6e45c19791))
+
 ## v0.1.1 (2024-07-12)
+
+### Documentation
+
+* docs(readme): improved service-repository pattern section ([`42f4bbd`](https://github.com/fleer/fastapi-server-template/commit/42f4bbdd59e4af6b9db8848c9c873a456545977e))
+
+### Feature
+
+* feat(repositpory/service): added repository and service layer ([`7b95f9a`](https://github.com/fleer/fastapi-server-template/commit/7b95f9a5b38aa5fa4ce2fba20fc1c96e37a8e063))
 
 ### Fix
 
 * fix(conftest): finally fixed database creation problem ([`035ba64`](https://github.com/fleer/fastapi-server-template/commit/035ba64c0100b39e10fbd6e3c2a7d7553424da9b))
+
+### Refactor
+
+* refactor(routes): moved routes to v1 and changed code correspondingly
+
+Fixed conftest and paths. Added info about repository and service layer ([`6332807`](https://github.com/fleer/fastapi-server-template/commit/633280730aad55a11ddb8cd63619e42a25be60ce))
 
 ### Unknown
 
