@@ -12,5 +12,5 @@ def test_tag(client: TestClient) -> None:
     Args:
         client (TestClient): FastAPI TestClient
     """
-    response = client.post("/tag/", data=json.dumps({"tag": "test"}))
+    response = client.post("/api/v1/tag/", data=json.dumps({"tag": "test"}))
     assert response.status_code == status.HTTP_201_CREATED

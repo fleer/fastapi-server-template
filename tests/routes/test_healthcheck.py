@@ -10,6 +10,6 @@ def test_healthcheck(client: TestClient) -> None:
     Args:
         client (TestClient): FastAPI TestClient
     """
-    response = client.get("/healthcheck")
+    response = client.get("/api/v1/healthcheck")
     assert response.status_code == status.HTTP_200_OK
     assert response.json() == {"status": "ok"}
