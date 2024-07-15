@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## v0.2.1 (2024-07-15)
+
+### Fix
+
+* fix(routes): fixed routes ([`f93f1fe`](https://github.com/fleer/fastapi-server-template/commit/f93f1fee86f5cc69bc3a06f47861693afba06f83))
+
 ## v0.2.0 (2024-07-14)
 
 ### Unknown
