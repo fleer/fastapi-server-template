@@ -1,9 +1,10 @@
-"""Schadenrouting API Gateway."""
+"""Service API Gateway."""
 
 import logging
 
 import uvicorn
 from fastapi import FastAPI
+from prometheus_fastapi_instrumentator import Instrumentator
 
 import service
 from service.routes.v1 import router
@@ -41,6 +42,9 @@ app = FastAPI(
 )
 
 app.router.include_router(router)
+
+# Start Prometheus instrumentator
+Instrumentator().instrument(app).expose(app)
 
 
 def start() -> None:
