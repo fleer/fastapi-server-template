@@ -78,6 +78,9 @@ database:
   password: postgres
 ```
 
+    When starting the app, it is checked if a `config.dev.yaml` file is present. If
+    this is the case, it is loaded instead of `config.yaml`
+
 ## Build
 
 The _package version_ is automatically determined via the current git tag.

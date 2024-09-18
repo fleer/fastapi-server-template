@@ -100,14 +100,20 @@ def setup_logging() -> None:
 
     timestamp = datetime.now().strftime("%Y%m%d-%H:%M:%S")
 
-    if not Path(LOG_DIR).exists():
-        Path(LOG_DIR).mkdir(parents=True, exist_ok=True)
+    if os.getenv("STAGE", "dev") == "dev":
+        logging.config.fileConfig(
+            config_path,
+            disable_existing_loggers=False,
+        )
+    else:
+        if not Path(LOG_DIR).exists():
+            Path(LOG_DIR).mkdir(parents=True, exist_ok=True)
 
-    logging.config.fileConfig(
-        config_path,
-        disable_existing_loggers=False,
-        defaults={"logfilename": f"{LOG_DIR}/{timestamp}.log"},
-    )
+        logging.config.fileConfig(
+            config_path,
+            disable_existing_loggers=False,
+            defaults={"logfilename": f"{LOG_DIR}/{timestamp}.log"},
+        )
 
 
 # find .env file in parent directory

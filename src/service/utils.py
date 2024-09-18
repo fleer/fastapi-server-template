@@ -51,7 +51,11 @@ def load_config() -> dict:
         dict: Dictionary with config
     """
     config_dir = find_dir("config")
-    config_path = Path.joinpath(config_dir, "config.yaml")
+
+    # First try to load the development configuration file
+    config_path = Path.joinpath(config_dir, "config.dev.yaml")
+    if not config_path.is_file():
+        config_path = Path.joinpath(config_dir, "config.yaml")
     try:
         # Open the file and load the file
         with config_path.open() as f:
