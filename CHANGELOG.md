@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## v0.4.0 (2024-09-27)
+
+### Unknown
+
+* Merge branch &#39;main&#39; of github.com:fleer/fastapi-server-template ([`2f8084c`](https://github.com/fleer/fastapi-server-template/commit/2f8084cbb5c124a595e310791ff8d98719ef0a7a))
+
 ## v0.3.0 (2024-09-18)
 
 ### Documentation
@@ -7,6 +13,8 @@
 * docs(api.py): fixed Module name ([`ebeefcf`](https://github.com/fleer/fastapi-server-template/commit/ebeefcfd2f8235ffbeb756864ad963d1dbdaf988))
 
 ### Feature
+
+* feat(prometheus): Added cpu and ram usage ([`6090a76`](https://github.com/fleer/fastapi-server-template/commit/6090a76e5ec076a960edcda40ea0b06cf1165cf1))
 
 * feat: Prometheus, dev logging, config.dev.yaml ([`4a8865f`](https://github.com/fleer/fastapi-server-template/commit/4a8865f2233aa74d37b44df4e5071d0752f256a3))
 
