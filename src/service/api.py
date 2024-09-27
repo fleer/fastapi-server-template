@@ -7,6 +7,7 @@ from fastapi import FastAPI
 from prometheus_fastapi_instrumentator import Instrumentator
 
 import service
+from service.prometheus_metrics import cpu_usage, ram_usage
 from service.routes.v1 import router
 from service.utils import get_config
 
@@ -44,7 +45,7 @@ app = FastAPI(
 app.router.include_router(router)
 
 # Start Prometheus instrumentator
-Instrumentator().instrument(app).expose(app)
+Instrumentator().instrument(app).add(ram_usage()).add(cpu_usage()).expose(app)
 
 
 def start() -> None:
