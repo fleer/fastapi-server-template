@@ -1,10 +1,34 @@
 # CHANGELOG
 
+## v0.3.0 (2024-09-18)
+
+### Documentation
+
+* docs(api.py): fixed Module name ([`ebeefcf`](https://github.com/fleer/fastapi-server-template/commit/ebeefcfd2f8235ffbeb756864ad963d1dbdaf988))
+
+### Feature
+
+* feat: Prometheus, dev logging, config.dev.yaml ([`4a8865f`](https://github.com/fleer/fastapi-server-template/commit/4a8865f2233aa74d37b44df4e5071d0752f256a3))
+
+### Refactor
+
+* refactor: Moved tests to v1 ([`bec2f94`](https://github.com/fleer/fastapi-server-template/commit/bec2f94808954f79bec0a7831451ea41bebb3393))
+
+### Unknown
+
+* refactor:api Small corrections ([`1b0488e`](https://github.com/fleer/fastapi-server-template/commit/1b0488e61d91750b0cfdef67c4f2b3ab70a92d21))
+
+* Merge branch &#39;main&#39; of github.com:fleer/fastapi-server-template ([`ac3240e`](https://github.com/fleer/fastapi-server-template/commit/ac3240e1a8c1546c3dcab633ea78dcf12a53df53))
+
 ## v0.2.1 (2024-07-15)
 
 ### Fix
 
 * fix(routes): fixed routes ([`f93f1fe`](https://github.com/fleer/fastapi-server-template/commit/f93f1fee86f5cc69bc3a06f47861693afba06f83))
+
+### Test
+
+* test(router): fixed tests for /api/v1 ([`0ad9414`](https://github.com/fleer/fastapi-server-template/commit/0ad94145c008f2baebddebe3a9ab6bede168b880))
 
 ## v0.2.0 (2024-07-14)
 
